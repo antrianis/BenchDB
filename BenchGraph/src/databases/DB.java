@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Vector;
 
-interface  DB {
+public interface  DB {
 
 
 	boolean delete(int in);

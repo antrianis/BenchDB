@@ -15,7 +15,7 @@ public class MySQLDB implements DB {
 	static Connection conn = null;
 	static Random random = new Random();
 	private double totalTime = 0;
-
+	
 	public void initialize() throws InstantiationException,
 			IllegalAccessException, ClassNotFoundException, SQLException {
 
@@ -75,12 +75,12 @@ public class MySQLDB implements DB {
 
 //		try {
 //			while (executeQuery.next()) {
-
+//
 //				System.out.println(executeQuery.getInt(1));
-
+//
 //			}
 //		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
+//			// TODO Auto-generated catch block
 //			e1.printStackTrace();
 //		}
 		try {
