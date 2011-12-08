@@ -157,4 +157,60 @@ public class Neo4jSocketDB implements DB {
 		System.out.println(String.valueOf((totalTime * 100.0) / totalOps));
 	}
 
+	public void addNode() {
+		long start = System.currentTimeMillis();
+
+		Collection<Integer> a = new ArrayList<Integer>();
+		a.add(6);
+		this.d.executeQuery(a);
+		long elapsedTime = System.currentTimeMillis() - start;
+		totalTime += elapsedTime;
+		
+	}
+
+	public void addEdge(int in1, int in2) {
+
+		
+		long start = System.currentTimeMillis();
+
+		Collection<Integer> a = new ArrayList<Integer>();
+		a.add(3);
+		a.add(in1);
+		a.add(in2);
+		this.d.executeQuery(a);
+		long elapsedTime = System.currentTimeMillis() - start;
+		totalTime += elapsedTime;
+
+	}
+
+	public void removeNode(int in1) {
+		long start = System.currentTimeMillis();
+
+		Collection<Integer> a = new ArrayList<Integer>();
+		a.add(8);
+
+		a.add(in1);
+
+		this.d.executeQuery(a);
+		long elapsedTime = System.currentTimeMillis() - start;
+		totalTime += elapsedTime;
+		
+	}
+
+	public void removeEdge(int in1, int in2) {
+
+		
+		long start = System.currentTimeMillis();
+
+		Collection<Integer> a = new ArrayList<Integer>();
+		a.add(7);
+		a.add(in1);
+		a.add(in2);
+
+		this.d.executeQuery(a);
+		long elapsedTime = System.currentTimeMillis() - start;
+		totalTime += elapsedTime;
+
+	}
+
 }

@@ -58,16 +58,17 @@ public class Driver {
 			this.neo4jAPI.readNode(gson.fromJson(array.get(1), int.class));
 			break;
 		}
-		case 2: {
+		case 2: {  /* Add Node */
 			this.neo4jAPI.update(gson.fromJson(array.get(1),int.class));
 			break;
 		}
-		case 3: {
-
-			this.neo4jAPI.getFollowers(gson.fromJson(array.get(1), int.class));
+		case 3: { /* Add Edge */
+			this.neo4jAPI.addEdge(gson.fromJson(array.get(1),
+					int.class), gson.fromJson(array.get(2), int.class));
+			//this.neo4jAPI.getFollowers(gson.fromJson(array.get(1), int.class));
 			break;
 		}
-		case 4: {
+		case 4: { /* Get Followers Only Ids */
 
 			this.neo4jAPI.getFollowersOnlyIds(gson.fromJson(array.get(1),
 					int.class));
@@ -81,7 +82,22 @@ public class Driver {
 			break;
 			// this.neo4jAPI.warmCache(this.graphDb);
 		}
+		case 6: { /* Add Node */
 
+			this.neo4jAPI.addNode();
+			break;
+		}
+		case 7: { /* Add Node */
+
+			this.neo4jAPI.removeEdge(gson.fromJson(array.get(1),
+					int.class), gson.fromJson(array.get(2), int.class));
+			break;
+		}
+		case 8: { /* Add Node */
+
+			this.neo4jAPI.removeNode(gson.fromJson(array.get(1), int.class));
+			break;
+		}
 		}
 
 		return jsonPacket;

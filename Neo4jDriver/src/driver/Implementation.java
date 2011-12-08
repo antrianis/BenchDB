@@ -2,6 +2,7 @@ package driver;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 
@@ -36,11 +37,11 @@ public class Implementation {
 		try
 		{
 			try{
-			t.getNodeById(in).delete();
+				t.getNodeById(in).delete();
 			}
 			catch(Exception e )
 			{
-				
+
 				System.out.println("ex while del");
 			}
 			tx.success();
@@ -77,7 +78,7 @@ public class Implementation {
 
 		return hm;
 	}
-	
+
 	public boolean update(int in) {
 		Transaction tx = t.beginTx();
 		try
@@ -98,9 +99,9 @@ public class Implementation {
 		return true;
 	}
 
-	
+
 	public Vector<HashMap<String,String>> getFollowers(int id) {
-		
+
 		Vector<HashMap<String, String>> results = new Vector<HashMap<String, String>>();
 		Iterable<Relationship> r = t.getNodeById(id).getRelationships(DynamicRelationshipType
 				.withName("FRIENDS"));
@@ -110,7 +111,7 @@ public class Implementation {
 			HashMap<String, String> hm = new HashMap<String, String>();	
 
 			Node n = ri.next().getStartNode();
-//			hm.put("id", String.valueOf(ri.next().getStartNode().getId()));
+			//			hm.put("id", String.valueOf(ri.next().getStartNode().getId()));
 
 			hm.put("nickname",n.getProperty("nickname").toString());
 			hm.put("password", n.getProperty("password").toString());
@@ -121,47 +122,43 @@ public class Implementation {
 		return results;
 	}
 
-	
+
 	public Vector<HashMap<String,String>> getFollowersOnlyIds(int id) {
 
 		Vector<HashMap<String, String>> results = new Vector<HashMap<String, String>>();
-		
+
 		Iterable<Relationship> r = t.getNodeById(id).getRelationships(DynamicRelationshipType
 				.withName("FRIENDS"));  //DIRECTION!!!
 		Iterator<Relationship> ri = r.iterator();
-
-
 
 		while(ri.hasNext()){
 			HashMap<String, String> hm = new HashMap<String, String>();	
 
 			Node n = ri.next().getStartNode();
 			hm.put("id", String.valueOf(n.getId()));
-
-			//System.out.println("neo4j id back is :" + n.getId());
 			results.add(hm);	
 		}
-	
+
 		return results;
 	}
-	
+
 	protected PathFinder<Path> instantiatePathFinder( int maxDepth )
 	{
 		return GraphAlgoFactory.allSimplePaths( Traversal.expanderForAllTypes(), maxDepth );
 	}
 
 	public Iterable<Path> degreeOfSeparation(int startNode, int endNode , int maxPathLenght){
-		
+
 		//printAllGraphNodes(t);
-		
+
 		PathFinder<Path> finder = instantiatePathFinder( maxPathLenght );
 		Iterable<Path> paths = finder.findAllPaths( t.getNodeById( startNode ), t.getNodeById( endNode) );
 
-	//	for (Path p : paths)
-	//	{
-	//		System.out.println(p);
-	//	}
-		
+		//	for (Path p : paths)
+		//	{
+		//		System.out.println(p);
+		//	}
+
 		return null;
 		//return paths;
 	}
@@ -182,7 +179,7 @@ public class Implementation {
 		}
 		return new String(buf);
 	}
-		public void warmCache(GraphDatabaseService graphDb) {
+	public void warmCache(GraphDatabaseService graphDb) {
 
 		Iterator<Node> nodes = graphDb.getAllNodes().iterator();
 
@@ -190,9 +187,9 @@ public class Implementation {
 		try {
 			while (nodes.hasNext()) {
 				Node currentNode = nodes.next();
-				
+
 				currentNode.getId(); //$NON-NLS-1$
-				
+
 
 			}
 			tx.success();
@@ -204,52 +201,140 @@ public class Implementation {
 
 	}
 
-		public static void printAllGraphNodes(GraphDatabaseService graphDb) {
+	public static void printAllGraphNodes(GraphDatabaseService graphDb) {
 
-			Iterator<Node> nodes = graphDb.getAllNodes().iterator();
+		Iterator<Node> nodes = graphDb.getAllNodes().iterator();
 
-			Transaction tx = graphDb.beginTx();
-			try {
-				while (nodes.hasNext()) {
-					Node currentNode = nodes.next();
+		Transaction tx = graphDb.beginTx();
+		try {
+			while (nodes.hasNext()) {
+				Node currentNode = nodes.next();
 
-					System.out.println("NODE: " + currentNode.getId()); //$NON-NLS-1$
+				System.out.println("NODE: " + currentNode.getId()); //$NON-NLS-1$
 
-					System.out.println("NODE PROPERTIES"); //$NON-NLS-1$
-					Iterator<String> keys = currentNode.getPropertyKeys()
-					.iterator();
+				System.out.println("NODE PROPERTIES"); //$NON-NLS-1$
+				Iterator<String> keys = currentNode.getPropertyKeys()
+				.iterator();
 
-					while (keys.hasNext()) {
-						String currentkey = keys.next();
-						System.out.print("Key: " + currentkey.toString()); //$NON-NLS-1$
-						System.out
-						.println("  Value: " + currentNode.getProperty(currentkey.toString())); //$NON-NLS-1$
-					}
-
-					Iterator<Relationship> relations = currentNode
-					.getRelationships().iterator();
-					System.out.println("NODE RELATIONS"); //$NON-NLS-1$
-					while (relations.hasNext()) {
-						Relationship currentRelation = relations.next();
-						System.out
-						.println("Relation Name: " + currentRelation.getType().name()); //$NON-NLS-1$
-						System.out
-						.println("Relation node id end node: " + currentRelation.getEndNode().getId()); //$NON-NLS-1$
-						System.out
-						.println("Relation node id other node: " + currentRelation.getOtherNode(currentRelation.getEndNode()).getId()); //$NON-NLS-1$
-					}
-
-					System.out.println();
-
+				while (keys.hasNext()) {
+					String currentkey = keys.next();
+					System.out.print("Key: " + currentkey.toString()); //$NON-NLS-1$
+					System.out
+					.println("  Value: " + currentNode.getProperty(currentkey.toString())); //$NON-NLS-1$
 				}
-				tx.success();
 
-			} finally {
-				tx.finish();
+				Iterator<Relationship> relations = currentNode
+				.getRelationships().iterator();
+				System.out.println("NODE RELATIONS"); //$NON-NLS-1$
+				while (relations.hasNext()) {
+					Relationship currentRelation = relations.next();
+					System.out
+					.println("Relation Name: " + currentRelation.getType().name()); //$NON-NLS-1$
+					System.out
+					.println("Relation node id end node: " + currentRelation.getEndNode().getId()); //$NON-NLS-1$
+					System.out
+					.println("Relation node id other node: " + currentRelation.getOtherNode(currentRelation.getEndNode()).getId()); //$NON-NLS-1$
+				}
+
+				System.out.println();
 
 			}
+			tx.success();
+
+		} finally {
+			tx.finish();
 
 		}
+
+	}
+	public  void addNode(){
+
+
+
+
+		Transaction tx = t.beginTx();
+		try
+		{
+			Node node = t.createNode();
+			node.setProperty("nickname", ASCIIString(20)); //$NON-NLS-1$
+			node.setProperty("password", ASCIIString(20)); //$NON-NLS-1$
+			node.setProperty("email", ASCIIString(20)); //$NON-NLS-1$
+
+
+
+		}
+		finally
+		{
+			tx.finish();
+		}
+
+
+	}
+
+
+	public void addEdge(Integer fromID, Integer toID) {
+
+		Transaction tx = t.beginTx();
+		try
+		{
+
+
+			Node n = t.getNodeById(fromID);
+			n.createRelationshipTo(t.getNodeById(toID), DynamicRelationshipType
+					.withName("FRIENDS"));
+
+
+
+		}
+		finally
+		{
+			tx.finish();
+		}
+
+
+
+	}
+
+
+	public void removeEdge(Integer fromid, Integer toID) {
+		Transaction tx = t.beginTx();
+		try
+		{
+			Iterable<Relationship> r = t.getNodeById(fromid).getRelationships(DynamicRelationshipType
+					.withName("FRIENDS"));
+			Iterator<Relationship> ri = r.iterator();
+
+			while(ri.hasNext()){
+
+				if (ri.next().getEndNode().getId() == toID){
+					
+					ri.remove();
+				}
+			}
+			
+			
+
+		}
+		finally
+		{
+			tx.finish();
+		}
 		
+	}
+
+
+	public void removeNode(Integer id) {
+		Transaction tx = t.beginTx();
+		try
+		{
+			 t.getNodeById(id).delete();			
+
+		}
+		finally
+		{
+			tx.finish();
+		}
 		
+	}
+
 }

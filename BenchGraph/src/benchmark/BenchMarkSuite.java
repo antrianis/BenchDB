@@ -56,16 +56,16 @@ public class BenchMarkSuite {
 
 
 		try {
-			b.fthroughput = new FileWriter("throughput_" + b.testCase + ".txt",true);
-			b.flatency = new FileWriter("latency_" + b.testCase + ".txt",true);
+			b.fthroughput = new FileWriter("Results/throughput_" + b.db +"_"+ b.testCase + ".txt",true);
+			b.flatency = new FileWriter("Results/latency_" + b.db +"_"+ b.testCase + ".txt",true);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 
 		b.outThroughput = new BufferedWriter(b.fthroughput);
 		b.outLatency = new BufferedWriter(b.flatency);
-		
-		
+
+
 		long st = 0;
 		long en = 0;
 		int opsDone = 0;
@@ -235,11 +235,11 @@ public class BenchMarkSuite {
 			break;
 		}
 		case 2: {
-			n.update(in1);
+			n.addNode();
 			break;
 		}
 		case 3: {
-			n.readNode(in1);
+			n.addEdge(in1,in2);
 			break;
 		}
 		case 4: {
@@ -250,7 +250,14 @@ public class BenchMarkSuite {
 			n.degreeOfSeparation(in1, in2, PATH_SIZE);
 			break;
 		}
-
+		case 6: {
+			n.removeNode(in1);
+			break;
+		}
+		case 7: {
+			n.removeEdge(in1,in2);
+			break;
+		}
 		}
 
 	}
@@ -272,11 +279,11 @@ public class BenchMarkSuite {
 			break;
 		}
 		case 2: {
-			s.update(in1);
+			s.addNode();
 			break;
 		}
 		case 3: {
-
+			s.addEdge(in1,in2);
 			break;
 		}
 		case 4: {
@@ -285,6 +292,14 @@ public class BenchMarkSuite {
 		}
 		case 5: {
 			s.degreeOfSeparation(in1, in2, PATH_SIZE);
+			break;
+		}
+		case 6: {
+			s.removeNode(in1);
+			break;
+		}
+		case 7: {
+			s.removeEdge(in1,in2);
 			break;
 		}
 		}
@@ -320,7 +335,7 @@ public class BenchMarkSuite {
 		int in = g.nextInt();
 		int in2 = 0;
 
-		if (this.testCase == 5)
+		if (this.testCase == 5 || this.testCase == 3)
 			in2 = g.nextInt();
 		executeFunctionNeo4j(in, in2,n);
 
@@ -333,7 +348,7 @@ public class BenchMarkSuite {
 		int in = g.nextInt();
 		int in2 = 0;
 
-		if (this.testCase == 5)
+		if (this.testCase == 5 || this.testCase == 3)
 			in2 = g.nextInt();
 		try {
 			executeFunctionMySQL(in, in2,s);
