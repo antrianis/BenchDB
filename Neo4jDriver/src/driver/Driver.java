@@ -16,14 +16,14 @@ public class Driver {
 
 
 	public Driver() {
-		
+
 		System.out.println(System.getProperty("user.dir"));;
 		this.graphDb = new EmbeddedGraphDatabase("db"); //$NON-NLS-1$
 
 		this.neo4jAPI = new Implementation();
-		
-//		this.neo4jAPI.printAllGraphNodes(graphDb);
-		
+
+		//		this.neo4jAPI.printAllGraphNodes(graphDb);
+
 		this.neo4jAPI.initialize(this.graphDb);
 
 		// if (General.DEBUG == 1)
@@ -54,13 +54,12 @@ public class Driver {
 
 			break;
 		}
-		case 1: {
+		case 1: { /* Read Node */
 			this.neo4jAPI.readNode(gson.fromJson(array.get(1), int.class));
 			break;
 		}
 		case 2: {
-			// this.neo4jAPI.update(i.next().getValue().getAsInt());
-			System.out.println("DUMP");
+			this.neo4jAPI.update(gson.fromJson(array.get(1),int.class));
 			break;
 		}
 		case 3: {

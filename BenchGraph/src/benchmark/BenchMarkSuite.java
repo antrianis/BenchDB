@@ -2,6 +2,9 @@ package benchmark;
 
 import generators.UniformIntegerGenerator;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Random;
@@ -29,9 +32,17 @@ public class BenchMarkSuite {
 	private int clientNumber;
 	private int opsPerClient;
 	private int maxExecutionTime;
+	private int repeate = 1;
+
+	FileWriter fthroughput;
+	FileWriter flatency;
+
+	BufferedWriter outThroughput;
+	BufferedWriter outLatency ;
+
 
 	public static void main(String[] args) throws SQLException {
-
+		int r = 0;
 		BenchMarkSuite b = new BenchMarkSuite();
 
 		b.testCase = Integer.parseInt(args[0]);
@@ -41,44 +52,65 @@ public class BenchMarkSuite {
 		b.mySqlSchema = Integer.parseInt(args[4]);
 		b.clientNumber = Integer.parseInt(args[5]);
 		b.maxExecutionTime = Integer.parseInt(args[6]);
-
 		b.opsPerClient = b.totalOps / b.clientNumber;
 
-		Vector<Thread> threads = new Vector<Thread>();
-		for (int threadid = 0; threadid < b.clientNumber; threadid++) {
 
-			Thread t = new ClientThread(b.db, threadid, b.clientNumber,
-					b.opsPerClient, b);// ,targetperthreadperms);
-
-			threads.add(t);
-
+		try {
+			b.fthroughput = new FileWriter("throughput_" + b.testCase + ".txt",true);
+			b.flatency = new FileWriter("latency_" + b.testCase + ".txt",true);
+		} catch (IOException e1) {
+			e1.printStackTrace();
 		}
 
-		long st = System.currentTimeMillis();
-
-		for (Thread t : threads) {
-			t.start();
-		}
-
-		Thread terminator = null;
-
-		terminator = new TerminatorThread(b.maxExecutionTime, threads, b);
-		terminator.start();
-
+		b.outThroughput = new BufferedWriter(b.fthroughput);
+		b.outLatency = new BufferedWriter(b.flatency);
+		
+		
+		long st = 0;
+		long en = 0;
 		int opsDone = 0;
 		int totalLatency = 0;
-		for (Thread t : threads) {
-			try {
-				t.join();
-				opsDone += ((ClientThread) t).getOpsDone();
-				totalLatency += ((ClientThread) t).getTotalLatency();
-			} catch (InterruptedException e) {
+		long running_time = 0;
+
+		while (r++ < b.repeate)
+		{
+			Vector<Thread> threads = new Vector<Thread>();
+			for (int threadid = 0; threadid < b.clientNumber; threadid++) {
+
+				Thread t = new ClientThread(b.db, threadid, b.clientNumber,
+						b.opsPerClient, b);// ,targetperthreadperms);
+
+				threads.add(t);
+
 			}
+
+			st = System.currentTimeMillis();
+
+			for (Thread t : threads) {
+				t.start();
+			}
+
+			Thread terminator = null;
+
+			terminator = new TerminatorThread(b.maxExecutionTime, threads, b);
+			terminator.start();
+
+
+			for (Thread t : threads) {
+				try {
+					t.join();
+					opsDone += ((ClientThread) t).getOpsDone();
+					totalLatency += ((ClientThread) t).getTotalLatency();
+					((ClientThread) t).closeConnection();
+				} catch (InterruptedException e) {
+				}
+			}
+
+			en = System.currentTimeMillis();
+			running_time  += (en - st);
 		}
 
-		long en = System.currentTimeMillis();
-
-		exportResults(en - st, opsDone, totalLatency);
+		b.exportResults(running_time, opsDone, totalLatency);
 
 		//		if (b.db.equals("neo4j")) //$NON-NLS-1$
 		// b.neo4jBench();
@@ -102,17 +134,40 @@ public class BenchMarkSuite {
 
 	}
 
-	private static void exportResults(long totalTime, int opsDone,
+	private  void exportResults(long totalTime, int opsDone,
 			int totalLatency) {
 
-		System.out.println("TotalTime is :" + totalTime + "ms");
+		System.out.println("TotalTime  :" + totalTime + "ms");
 		System.out.println("Total Ops done  :" + opsDone);
-		System.out.println("Throughput is : (opsdone/totaltime) "
-				+ (double) opsDone / (double) totalTime);
-		System.out.println("Average Latency is : (totalLatency/opsDone) "
-				+ (double) totalLatency / (double) opsDone);
 
+		double throughput = (double) (opsDone * 1000 ) / (double) totalTime;
+
+		System.out.println("Throughput is : (opsdone/sec) "
+				+ throughput);
+
+		double latency = (double) totalLatency / (double) opsDone;
+
+		System.out.println("Average Latency : (totalLatency/opsDone) "
+				+ latency );
+
+		logResults(throughput,latency);
 	}
+
+
+	public void logResults(double throughput, double latency)
+	{
+		try{
+			outLatency.write(" " + latency);
+			outThroughput.write(" " + throughput);
+
+			outLatency.close();
+			outThroughput.close();
+
+		}catch (Exception e){
+			System.err.println("Error: " + e.getMessage());
+		}
+	}
+
 
 	private void printResult(String db) {
 		System.out.println(db);
@@ -122,51 +177,51 @@ public class BenchMarkSuite {
 			this.s.getTotalTime(this.totalOps);
 	}
 
-//	private void neo4jBench() {
-//
-//		this.n.initialize();
-//
-//		UniformIntegerGenerator g = new UniformIntegerGenerator(1, totalNodes); // 1
-//		// -
-//		// 1000
-//		int in = g.nextInt();
-//		int in2 = 0;
-//		for (int i = 0; i < this.totalOps; i++) {
-//
-//			if (this.testCase == 5)
-//				in2 = g.nextInt();
-//			executeFunctionNeo4j(in, in2);
-//			in = g.nextInt();
-//		}
-//
-//	}
+	//	private void neo4jBench() {
+	//
+	//		this.n.initialize();
+	//
+	//		UniformIntegerGenerator g = new UniformIntegerGenerator(1, totalNodes); // 1
+	//		// -
+	//		// 1000
+	//		int in = g.nextInt();
+	//		int in2 = 0;
+	//		for (int i = 0; i < this.totalOps; i++) {
+	//
+	//			if (this.testCase == 5)
+	//				in2 = g.nextInt();
+	//			executeFunctionNeo4j(in, in2);
+	//			in = g.nextInt();
+	//		}
+	//
+	//	}
 
-//	private void mysqlBench() throws SQLException {
-//		this.s = new MySQLDB();
-//		try {
-//			this.s.initialize();
-//		} catch (InstantiationException e) {
-//			e.printStackTrace();
-//		} catch (IllegalAccessException e) {
-//			e.printStackTrace();
-//		} catch (ClassNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//		UniformIntegerGenerator g = new UniformIntegerGenerator(0,
-//				totalNodes - 1); // 0 - 999
-//		int in = g.nextInt();
-//		int in2 = 0;
-//		for (int i = 0; i < this.totalOps; i++) {
-//
-//			if (this.testCase == 5)
-//				in2 = g.nextInt();
-//			executeFunctionMySQL(in, in2);
-//			in = g.nextInt();
-//		}
-//
-//	}
+	//	private void mysqlBench() throws SQLException {
+	//		this.s = new MySQLDB();
+	//		try {
+	//			this.s.initialize();
+	//		} catch (InstantiationException e) {
+	//			e.printStackTrace();
+	//		} catch (IllegalAccessException e) {
+	//			e.printStackTrace();
+	//		} catch (ClassNotFoundException e) {
+	//			e.printStackTrace();
+	//		} catch (SQLException e) {
+	//			e.printStackTrace();
+	//		}
+	//		UniformIntegerGenerator g = new UniformIntegerGenerator(0,
+	//				totalNodes - 1); // 0 - 999
+	//		int in = g.nextInt();
+	//		int in2 = 0;
+	//		for (int i = 0; i < this.totalOps; i++) {
+	//
+	//			if (this.testCase == 5)
+	//				in2 = g.nextInt();
+	//			executeFunctionMySQL(in, in2);
+	//			in = g.nextInt();
+	//		}
+	//
+	//	}
 
 	private void executeFunctionNeo4j(int in1, int in2,Neo4jSocketDB n) {
 
@@ -176,11 +231,11 @@ public class BenchMarkSuite {
 			break;
 		}
 		case 1: {
-			n.getFollowers(in1);
+			n.readNode(in1);
 			break;
 		}
 		case 2: {
-			n.delete(in1);
+			n.update(in1);
 			break;
 		}
 		case 3: {
@@ -213,15 +268,15 @@ public class BenchMarkSuite {
 			break;
 		}
 		case 1: {
-			s.getFollowersManyOnlyIds(in1);
+			s.readNode(in1);
 			break;
 		}
 		case 2: {
-			s.delete(in1);
+			s.update(in1);
 			break;
 		}
 		case 3: {
-			s.readNode(in1);
+
 			break;
 		}
 		case 4: {
@@ -310,7 +365,7 @@ public class BenchMarkSuite {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
+
 			return sqlDB;
 		}
 		return null;
@@ -332,6 +387,8 @@ class ClientThread extends Thread {
 	int _latency;
 
 	private BenchMarkSuite _b;
+
+	DB t;
 
 	/**
 	 * Constructor.
@@ -355,6 +412,7 @@ class ClientThread extends Thread {
 	 */
 	// public ClientThread(String db, int threadid, int threadcount, int
 	// opcount, double targetperthreadperms,TerminatorThread t)
+
 	public ClientThread(String db, int threadid, int threadcount, int opcount,
 			BenchMarkSuite b)
 
@@ -367,6 +425,16 @@ class ClientThread extends Thread {
 		// _target=targetperthreadperms;
 		// _threadcount=threadcount;
 		_b = b;
+		//   t = _b.initializeDB(_db);
+
+	}
+
+	public void closeConnection() {
+		//	if (_db.equals("neo4j")) //$NON-NLS-1$
+		//	t.closeConnection();
+
+
+
 	}
 
 	public int getOpsDone() {
@@ -392,8 +460,9 @@ class ClientThread extends Thread {
 		} catch (InterruptedException e) {
 			// do nothing.
 		}
-		DB t = _b.initializeDB(_db);
-		
+		//	DB t = _b.initializeDB(_db);
+		t = _b.initializeDB(_db);
+
 		while (((_opcount == 0) || (_opsdone < _opcount))
 				&& !_b.isStopRequested()) {
 
@@ -446,8 +515,8 @@ class TerminatorThread extends Thread {
 		this.maxExecutionTime = maxExecutionTime;
 		this.threads = threads;
 		waitTimeOutInMS = 2000;
-		System.err.println("Maximum execution time specified as: "
-				+ maxExecutionTime + " secs");
+		//System.err.println("Maximum execution time specified as: "
+		//	+ maxExecutionTime + " secs");
 	}
 
 	public void run() {
@@ -459,12 +528,12 @@ class TerminatorThread extends Thread {
 			return;
 		}
 
-		System.err
-		.println("Maximum time elapsed. Requesting stop for the workload.");
+		//System.err
+		//.println("Maximum time elapsed. Requesting stop for the workload.");
 
 		_b.stopRequested();
 
-		System.err.println("Stop requested for workload. Now Joining!");
+		//System.err.println("Stop requested for workload. Now Joining!");
 		for (Thread t : threads) {
 			while (t.isAlive()) {
 				try {

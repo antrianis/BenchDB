@@ -87,9 +87,6 @@ public class Implementation {
 			n.setProperty("nickname", ASCIIString(20)); //$NON-NLS-1$
 			n.setProperty("password", ASCIIString(20)); //$NON-NLS-1$
 			n.setProperty("email", ASCIIString(20)); //$NON-NLS-1$
-
-
-
 			tx.success();
 		}
 		finally

@@ -55,10 +55,7 @@ public class MySQLDB implements DB {
 				")" 
 				;
 		
-
-//	String sql=	 "SELECT DISTINCT d2.to_ID FROM friendship d1 JOIN friendship d2 ON d1.from_ID = d2.to_ID AND d2.from_ID = 1 AND d1.to_ID = 2;";
-
-		
+	
 		Statement s = null;
 		try {
 			s = conn.createStatement();
@@ -437,6 +434,11 @@ public class MySQLDB implements DB {
 		// getFollowersOneTable(id);
 		// getFollowersManyTables(id);
 		return null;
+	}
+
+	public void closeConnection() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

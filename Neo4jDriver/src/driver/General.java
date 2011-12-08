@@ -2,7 +2,7 @@ package driver;
 
 public class General {
 
-	public static final int ServerPort = 44441;
+	public static final int ServerPort = 44442;
 	public static final int DEBUG = 1; // DEBUG_LEVEL 0,1,2
 
 	public enum Code {

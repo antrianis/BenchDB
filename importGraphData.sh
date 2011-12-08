@@ -1,6 +1,6 @@
 # nodes relations
 
-parameters=( "10000" "20000000" "one") 
+parameters=( "10000" "1000000" "one") 
 
 echo "Importing Graph Data:"
 echo "No of nodes:" ${parameters[0]}

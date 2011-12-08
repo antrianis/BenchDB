@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #test case / total ops / total nodes /  neo4j or mysql / mysqlSchema
 
 
@@ -10,27 +12,30 @@
 #b.maxExecutionTime = Integer.parseInt(args[6]);
 
 
-#COUNTER=0
-#while [  $COUNTER -lt 10 ]; do
-#            let COUNTER=COUNTER+1 
+parameters=("1" "30" "10000" "neo4j" "0" "1" "1")  
 
 
-parameters=("5" "100" "10000" "neo4j" "0" "10" "3")  
+COUNTER=0
+while [  $COUNTER -lt 20 ]; do
+            let COUNTER=COUNTER+1 
 
-echo "Executing BenchMark:"
+#echo "Executing BenchMark:"
 
-echo "Test Case:" ${parameters[0]} 
+#echo "Test Case:" ${parameters[0]} 
 
-echo "Total Operations:" ${parameters[1]} 
+#echo "Total Operations:" ${parameters[1]} 
 
-echo "REMEMBER TO SYNCHRONISE THIS VALUE Total Nodes:"  ${parameters[2]}
+#echo "REMEMBER TO SYNCHRONISE THIS VALUE Total Nodes:"  ${parameters[2]}
 
-echo "DB:" ${parameters[3]}
+parameters[3]="neo4j";
 
-#./statistics.sh
+
+#echo "DB:" ${parameters[3]}
+
+##./statistics.sh
 
 cd BenchGraph/
-
+#parameters[1]=240;
 java -cp lib/mysql-connector-java-5.1.17-bin.jar:lib/neo4jDriver.jar:bin/:lib/gson-1.7.1.jar benchmark.BenchMarkSuite ${parameters[0]} ${parameters[1]} ${parameters[2]} ${parameters[3]} ${parameters[4]} ${parameters[5]} ${parameters[6]}
 
 
@@ -39,16 +44,24 @@ java -cp lib/mysql-connector-java-5.1.17-bin.jar:lib/neo4jDriver.jar:bin/:lib/gs
 
 #sudo mount -t tmpfs -o size=1024M tmpfs /tmp/ramdisk
 
+#cd ..
+
+
+##parameters=("1" "1000" "1000" "mysql" "1" "1" "3")  
+
+#parameters[3]="mysql";
+
+#echo "DB:" ${parameters[3]}
+
+##./statistics.sh
+
+#cd BenchGraph/
+
+#java -cp lib/mysql-connector-java-5.1.17-bin.jar:lib/neo4jDriver.jar:bin/:lib/gson-1.7.1.jar benchmark.BenchMarkSuite ${parameters[0]} ${parameters[1]} ${parameters[2]} ${parameters[3]} ${parameters[4]} ${parameters[5]} ${parameters[6]}
+
+
+let parameters[1]=parameters[1]*2 
+
 cd ..
 
-
-parameters=("5" "100" "10000" "mysql" "1" "10" "3")  
-
-echo "DB:" ${parameters[3]}
-
-#./statistics.sh
-
-cd BenchGraph/
-
-java -cp lib/mysql-connector-java-5.1.17-bin.jar:lib/neo4jDriver.jar:bin/:lib/gson-1.7.1.jar benchmark.BenchMarkSuite ${parameters[0]} ${parameters[1]} ${parameters[2]} ${parameters[3]} ${parameters[4]} ${parameters[5]} ${parameters[6]}
-
+done

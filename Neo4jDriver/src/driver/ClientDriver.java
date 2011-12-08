@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 
 public class ClientDriver {
 	String address = "localhost";
-	int port = 44441;
+	int port = 44442;
 	private Socket socket;
 	private BufferedWriter wr;
 	Gson gson = new Gson();
@@ -32,7 +32,7 @@ public class ClientDriver {
 
 	public void executeQuery(Collection<?> a) {
 
-		connect();
+		//connect();
 		try {
 			wr.write(gson.toJson(a));
 			wr.write("\n");
@@ -40,10 +40,15 @@ public class ClientDriver {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		//closeConnection();
 	}
 
-	void closeConnection() {
-
+	public void closeConnection() {
+       try {
+		socket.close();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	}
 }

@@ -18,12 +18,19 @@ public class Neo4jSocketDB implements DB {
 	public void initialize() {
 
 		this.d = new ClientDriver();
+		this.d.connect();
 //		Collection<Integer> a = new ArrayList<Integer>();
 //		a.add(5);
 //		this.d.executeQuery(a);
 
 	}
 
+	public void closeConnection(){
+		
+		this.d.closeConnection();
+		
+	}
+	
 	public boolean delete(int in) {
 
 		long start = System.currentTimeMillis();
@@ -55,7 +62,13 @@ public class Neo4jSocketDB implements DB {
 
 	public boolean update(int in) {
 		long start = System.currentTimeMillis();
-		// d.executeQuery(new Integer[]{2,in});
+		
+		Collection<Integer> a = new ArrayList<Integer>();
+		a.add(2);
+		a.add(in);
+		this.d.executeQuery(a);
+		
+		
 		long elapsedTime = System.currentTimeMillis() - start;
 		this.totalTime += elapsedTime;
 		return true;

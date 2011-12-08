@@ -13,6 +13,7 @@ public interface  DB {
 	HashMap<String,String> readNode(int in) throws SQLException;
 	Vector<HashMap<String, String>> getFollowers(int id) throws SQLException;
 	void degreeOfSeparation(int startNode, int endNode , int maxPathLenght);
+	void closeConnection();
 
 
 }
