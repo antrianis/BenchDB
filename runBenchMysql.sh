@@ -12,11 +12,14 @@
 #b.maxExecutionTime = Integer.parseInt(args[6]);
 
 
-parameters=("1" "30" "10000" "mysql" "0" "1" "3")  
+parameters=("1" "30" "10000" "mysql" "0" "1" "1")  
+
+
+#parameters=("0" "2" "10000" "mysql" "0" "1" "3")  
 
 
 COUNTER=0
-while [  $COUNTER -lt 20 ]; do
+while [  $COUNTER -lt 10 ]; do
             let COUNTER=COUNTER+1 
 
 #echo "Executing BenchMark:"
@@ -60,7 +63,10 @@ cd BenchGraph/
 java -cp lib/mysql-connector-java-5.1.17-bin.jar:lib/neo4jDriver.jar:bin/:lib/gson-1.7.1.jar benchmark.BenchMarkSuite ${parameters[0]} ${parameters[1]} ${parameters[2]} ${parameters[3]} ${parameters[4]} ${parameters[5]} ${parameters[6]}
 
 
-let parameters[1]=parameters[1]*2 
+#let parameters[1]=parameters[1]*2 
+
+let parameters[4]=parameters[4]*2 
+
 
 cd ..
 

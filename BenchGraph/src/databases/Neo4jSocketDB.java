@@ -15,6 +15,9 @@ public class Neo4jSocketDB implements DB {
 	static Random random = new Random();
 	private ClientDriver d;
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#initialize()
+	 */
 	public void initialize() {
 
 		this.d = new ClientDriver();
@@ -25,12 +28,18 @@ public class Neo4jSocketDB implements DB {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#closeConnection()
+	 */
 	public void closeConnection(){
 		
 		this.d.closeConnection();
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see databases.DB3#delete(int)
+	 */
 	public boolean delete(int in) {
 
 		long start = System.currentTimeMillis();
@@ -45,6 +54,9 @@ public class Neo4jSocketDB implements DB {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#readNode(int)
+	 */
 	public HashMap<String, String> readNode(int in) {
 
 		HashMap<String, String> hm = new HashMap<String, String>();
@@ -60,6 +72,9 @@ public class Neo4jSocketDB implements DB {
 		return hm;
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#update(int)
+	 */
 	public boolean update(int in) {
 		long start = System.currentTimeMillis();
 		
@@ -74,6 +89,9 @@ public class Neo4jSocketDB implements DB {
 		return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#getFollowers(int)
+	 */
 	public Vector<HashMap<String, String>> getFollowers(int id) {
 
 		long start = System.currentTimeMillis();
@@ -92,6 +110,9 @@ public class Neo4jSocketDB implements DB {
 		return results;
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#getFollowersOnlyIds(int)
+	 */
 	public Vector<HashMap<String, String>> getFollowersOnlyIds(int id) {
 
 		long start = System.currentTimeMillis();
@@ -123,6 +144,9 @@ public class Neo4jSocketDB implements DB {
 	// return results;
 	// }
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#degreeOfSeparation(int, int, int)
+	 */
 	public void degreeOfSeparation(int startNode, int endNode, int maxPathLenght) {
 
 		long start = System.currentTimeMillis();
@@ -152,11 +176,17 @@ public class Neo4jSocketDB implements DB {
 		return new String(buf);
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#getTotalTime(int)
+	 */
 	public void getTotalTime(int totalOps) {
 
 		System.out.println(String.valueOf((totalTime * 100.0) / totalOps));
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#addNode()
+	 */
 	public void addNode() {
 		long start = System.currentTimeMillis();
 
@@ -168,6 +198,9 @@ public class Neo4jSocketDB implements DB {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#addEdge(int, int)
+	 */
 	public void addEdge(int in1, int in2) {
 
 		
@@ -183,6 +216,9 @@ public class Neo4jSocketDB implements DB {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#removeNode(int)
+	 */
 	public void removeNode(int in1) {
 		long start = System.currentTimeMillis();
 
@@ -197,6 +233,9 @@ public class Neo4jSocketDB implements DB {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB3#removeEdge(int, int)
+	 */
 	public void removeEdge(int in1, int in2) {
 
 		

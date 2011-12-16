@@ -16,16 +16,37 @@ public class MySQLDB implements DB {
 	static Random random = new Random();
 	private double totalTime = 0;
 
-	public void initialize() throws InstantiationException,
-	IllegalAccessException, ClassNotFoundException, SQLException {
+	/* (non-Javadoc)
+	 * @see databases.DB2#initialize()
+	 */
+	public void initialize() {
 
 		String userName = "socialUser";
 		String password = "socialUser";
 		String url = "jdbc:mysql://localhost/social";
-		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		conn = DriverManager.getConnection(url, userName, password);
+		try {
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+		} catch (InstantiationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			conn = DriverManager.getConnection(url, userName, password);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#degreeOfSeparation(int, int, int)
+	 */
 	public void degreeOfSeparation(int startNode, int endNode, int maxPathLenght) {
 
 		long start = System.currentTimeMillis();
@@ -91,6 +112,9 @@ public class MySQLDB implements DB {
 		totalTime += elapsedTime;
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#getFollowersManyTables(int)
+	 */
 	public Vector<HashMap<String, String>> getFollowersManyTables(int id)
 	throws SQLException {
 
@@ -131,6 +155,9 @@ public class MySQLDB implements DB {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#getFollowersOneTable(int)
+	 */
 	public Vector<HashMap<String, String>> getFollowersOneTable(int id)
 	throws SQLException {
 
@@ -168,6 +195,9 @@ public class MySQLDB implements DB {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#getFollowersOneTableOnlyIds(int)
+	 */
 	public Vector<HashMap<String, String>> getFollowersOneTableOnlyIds(int id)
 	throws SQLException {
 
@@ -237,6 +267,9 @@ public class MySQLDB implements DB {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#getFollowersManyOnlyIds(int)
+	 */
 	public Vector<HashMap<String, String>> getFollowersManyOnlyIds(int id)
 	throws SQLException {
 
@@ -283,6 +316,9 @@ public class MySQLDB implements DB {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#delete(int)
+	 */
 	public boolean delete(int in) {
 
 		long start = System.currentTimeMillis();
@@ -307,6 +343,9 @@ public class MySQLDB implements DB {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#readNodeNoTime(int)
+	 */
 	public HashMap<String, String> readNodeNoTime(int in) throws SQLException {
 
 		Statement s = null;
@@ -343,7 +382,10 @@ public class MySQLDB implements DB {
 
 	}
 
-	public HashMap<String, String> readNode(int in) throws SQLException {
+	/* (non-Javadoc)
+	 * @see databases.DB2#readNode(int)
+	 */
+	public HashMap<String, String> readNode(int in) {
 
 		Statement s = null;
 		long start = System.currentTimeMillis();
@@ -355,19 +397,34 @@ public class MySQLDB implements DB {
 
 		String sql = "SELECT * FROM user WHERE id =" + in;
 
-		s.executeQuery(
+		try {
+			s.executeQuery(
 
-				sql);
+					sql);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 		HashMap<String, String> hm = null;
-		ResultSet rs = s.getResultSet();
+		ResultSet rs = null;
+		try {
+			rs = s.getResultSet();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
-		while (rs.next()) {
+		try {
+			while (rs.next()) {
 
-			hm = new HashMap<String, String>();
-			hm.put("nickname", rs.getString("nickname"));
-			hm.put("password", rs.getString("password"));
-			hm.put("email", rs.getString("email"));
+				hm = new HashMap<String, String>();
+				hm.put("nickname", rs.getString("nickname"));
+				hm.put("password", rs.getString("password"));
+				hm.put("email", rs.getString("email"));
 
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		try {
 			rs.close();
@@ -382,6 +439,9 @@ public class MySQLDB implements DB {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#update(int)
+	 */
 	public boolean update(int in) {
 		long start = System.currentTimeMillis();
 		try {
@@ -422,25 +482,41 @@ public class MySQLDB implements DB {
 		return new String(buf);
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#getTotalTime(int)
+	 */
 	public void getTotalTime(int totalOps) {
 
 		System.out.println(String.valueOf((totalTime * 100.0) / totalOps));
 	}
 
-	public Vector<HashMap<String, String>> getFollowers(int id)
-	throws SQLException {
+	/* (non-Javadoc)
+	 * @see databases.DB2#getFollowers(int)
+	 */
+	public Vector<HashMap<String, String>> getFollowers(int id) {
 
-		getFollowersOneTableOnlyIds(id);
+		try {
+			getFollowersOneTableOnlyIds(id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// getFollowersOneTable(id);
 		// getFollowersManyTables(id);
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#closeConnection()
+	 */
 	public void closeConnection() {
 		// TODO Auto-generated method stub
 
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#addNode()
+	 */
 	public void addNode() {
 
 		String sql =  "INSERT INTO user (nickname,password,email)" + " VALUES (?,?,?)";
@@ -473,7 +549,10 @@ public class MySQLDB implements DB {
 		}
 	}
 
-	public void addEdge(long toID, long fromID) {
+	/* (non-Javadoc)
+	 * @see databases.DB2#addEdge(long, long)
+	 */
+	public void addEdge(int toID, int fromID) {
 		long start = System.currentTimeMillis();  
 
 		int count = 0;
@@ -508,6 +587,9 @@ public class MySQLDB implements DB {
 		totalTime += elapsedTime;
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#removeNode(int)
+	 */
 	public void removeNode(int in1) {
 		
 		long start = System.currentTimeMillis();  
@@ -546,6 +628,9 @@ public class MySQLDB implements DB {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see databases.DB2#removeEdge(int, int)
+	 */
 	public void removeEdge(int in1, int in2) {
 
 	
@@ -583,6 +668,12 @@ public class MySQLDB implements DB {
 		}
 		long elapsedTime = System.currentTimeMillis() - start;
 		totalTime += elapsedTime;
+	}
+
+
+	public Vector<HashMap<String, String>> getFollowersOnlyIds(int id) {
+		System.out.println("DUMP");
+		return null;
 	}
 
 

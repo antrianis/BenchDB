@@ -23,8 +23,7 @@ public class BenchMarkSuite {
 	private static boolean shouldStop;
 	private int totalOps;
 	private Integer testCase;
-	private Neo4jSocketDB n = new Neo4jSocketDB(); // Neo4jDB n = new Neo4jDB();
-	private MySQLDB s;
+	//private Neo4jSocketDB n = new Neo4jSocketDB(); // Neo4jDB n = new Neo4jDB();
 	private String db;
 	private int totalNodes;
 	private Integer mySqlSchema;
@@ -52,8 +51,9 @@ public class BenchMarkSuite {
 		b.mySqlSchema = Integer.parseInt(args[4]);
 		b.clientNumber = Integer.parseInt(args[5]);
 		b.maxExecutionTime = Integer.parseInt(args[6]);
-		b.opsPerClient = b.totalOps / b.clientNumber;
-
+//		b.opsPerClient = b.totalOps / b.clientNumber;
+		b.opsPerClient = b.totalOps;
+                b.totalOps = b.opsPerClient * b.clientNumber;
 
 		try {
 			b.fthroughput = new FileWriter("Results/throughput_" + b.db +"_"+ b.testCase + ".txt",true);
@@ -112,16 +112,6 @@ public class BenchMarkSuite {
 
 		b.exportResults(running_time, opsDone, totalLatency);
 
-		//		if (b.db.equals("neo4j")) //$NON-NLS-1$
-		// b.neo4jBench();
-		//		else if (b.db.equals("mysql")) //$NON-NLS-1$
-		// b.mysqlBench();
-		// else
-		// {
-		// System.err.println("No such db");
-		// System.exit(-1);
-		// }
-		// b.printResult(b.db);
 	}
 
 	boolean isStopRequested() {
@@ -151,14 +141,16 @@ public class BenchMarkSuite {
 				+ latency );
 
 		logResults(throughput,latency);
+
+
 	}
 
 
 	public void logResults(double throughput, double latency)
 	{
 		try{
-			outLatency.write(" " + latency);
-			outThroughput.write(" " + throughput);
+			outLatency.write(latency + "\n");
+			outThroughput.write(throughput + "\n");
 
 			outLatency.close();
 			outThroughput.close();
@@ -167,61 +159,6 @@ public class BenchMarkSuite {
 			System.err.println("Error: " + e.getMessage());
 		}
 	}
-
-
-	private void printResult(String db) {
-		System.out.println(db);
-		if (db.equals("neo4j"))
-			this.n.getTotalTime(this.totalOps);
-		else
-			this.s.getTotalTime(this.totalOps);
-	}
-
-	//	private void neo4jBench() {
-	//
-	//		this.n.initialize();
-	//
-	//		UniformIntegerGenerator g = new UniformIntegerGenerator(1, totalNodes); // 1
-	//		// -
-	//		// 1000
-	//		int in = g.nextInt();
-	//		int in2 = 0;
-	//		for (int i = 0; i < this.totalOps; i++) {
-	//
-	//			if (this.testCase == 5)
-	//				in2 = g.nextInt();
-	//			executeFunctionNeo4j(in, in2);
-	//			in = g.nextInt();
-	//		}
-	//
-	//	}
-
-	//	private void mysqlBench() throws SQLException {
-	//		this.s = new MySQLDB();
-	//		try {
-	//			this.s.initialize();
-	//		} catch (InstantiationException e) {
-	//			e.printStackTrace();
-	//		} catch (IllegalAccessException e) {
-	//			e.printStackTrace();
-	//		} catch (ClassNotFoundException e) {
-	//			e.printStackTrace();
-	//		} catch (SQLException e) {
-	//			e.printStackTrace();
-	//		}
-	//		UniformIntegerGenerator g = new UniformIntegerGenerator(0,
-	//				totalNodes - 1); // 0 - 999
-	//		int in = g.nextInt();
-	//		int in2 = 0;
-	//		for (int i = 0; i < this.totalOps; i++) {
-	//
-	//			if (this.testCase == 5)
-	//				in2 = g.nextInt();
-	//			executeFunctionMySQL(in, in2);
-	//			in = g.nextInt();
-	//		}
-	//
-	//	}
 
 	private void executeFunctionNeo4j(int in1, int in2,Neo4jSocketDB n) {
 
@@ -369,17 +306,7 @@ public class BenchMarkSuite {
 		else if (db.equals("mysql")){
 			MySQLDB sqlDB = null;
 			sqlDB = new MySQLDB();
-			try {
-				sqlDB.initialize();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			sqlDB.initialize();
 
 			return sqlDB;
 		}
